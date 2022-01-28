@@ -23,6 +23,12 @@ repos:
   - id: flake8
 - repo: local
   hooks:
+  - id: install
+    name: installing package
+    entry: pip install -e .
+    language: python
+    always_run: true
+    pass_filenames: false
   - id: pytest
     name: pytest
     entry: pytest
