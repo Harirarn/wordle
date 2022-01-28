@@ -75,7 +75,8 @@ compare wordl answer
 exit|quit|end
     exits.
 """
-if __name__ == "__main__":
+
+def main():
     with open(wordlist) as f:
         words = [wordl(i) for i in f.read().split("\n")]
 
@@ -120,3 +121,7 @@ if __name__ == "__main__":
             print("\n".join(reverse_list))
         elif com[0] == "help":
             print(help_text)
+
+
+if __name__ == "__main__":
+    main()
