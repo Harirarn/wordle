@@ -1,7 +1,6 @@
 import string
 import math
 
-N = 5
 wordlist = "Wordlelist.txt"
 
 
@@ -16,7 +15,8 @@ class wordl:
         return self.word > other.word
 
 
-def compare(word, key, n=N):
+def compare(word, key):
+    n = len(word)
     signal = [0] * n
     for i in range(n):
         if word[i] == key[i]:
@@ -76,9 +76,10 @@ exit|quit|end
     exits.
 """
 
+
 def main():
     with open(wordlist) as f:
-        words = [wordl(i) for i in f.read().split("\n")]
+        words = [wordl(i) for i in f.read().split("\n") if i]
 
     pruned = words[:]
     while True:
