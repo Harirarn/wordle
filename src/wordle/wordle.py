@@ -65,4 +65,4 @@ class WordleList(list):
         else:
             list_ = [WeightedWordle(Wordle(word[0]), word[1]) for word in wordlelist]
         list_.sort(reverse=True)
-        super.__init__(list_)
+        super().__init__(list_)
