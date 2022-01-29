@@ -27,6 +27,11 @@ class Clue(list):
                 raise ValueError("Signal length must match word length")
         super().__init__(signal)
 
+    @classmethod
+    def from_compare(cls, guess: Wordle | str, key: Wordle | str) -> Clue:
+        guess, key = Wordle(guess), Wordle(key)
+        return cls(guess, compare(guess, key))
+
 
 def compare(guess: str, key: str) -> Clue:
     n = len(guess)
@@ -65,4 +70,7 @@ class WordleList(list):
         else:
             list_ = [WeightedWordle(Wordle(word[0]), word[1]) for word in wordlelist]
         list_.sort(reverse=True)
+        ziplist = tuple(zip(*list_))
+        self.words: tuple[Wordle] = ziplist[0]
+        self.weights: tuple[int] = ziplist[1]
         super().__init__(list_)
