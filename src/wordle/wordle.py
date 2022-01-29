@@ -10,12 +10,6 @@ class Wordle(str):
             return word
         return super().__new__(cls, word.lower())
 
-    def compare(self, key: Wordle) -> Clue:
-        return compare(self, key)
-
-    def guess(self, guess: Wordle) -> Clue:
-        return compare(guess, self)
-
 
 class Clue(list):
     def __init__(self, word: Wordle, signal: list[int] = None):
@@ -27,15 +21,18 @@ class Clue(list):
                 raise ValueError("Signal length must match word length")
         super().__init__(signal)
 
+    def same(self, other: Clue) -> bool:
+        return self.word == other.word and self == other
+
     @classmethod
     def from_compare(cls, guess: Wordle | str, key: Wordle | str) -> Clue:
         guess, key = Wordle(guess), Wordle(key)
         return cls(guess, compare(guess, key))
 
 
-def compare(guess: str, key: str) -> Clue:
+def compare(guess: str, key: str) -> list[int]:
     n = len(guess)
-    signal = Clue(guess)
+    signal = [0] * n
 
     # Compare greens
     for i in range(n):
