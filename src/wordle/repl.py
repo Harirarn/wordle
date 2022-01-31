@@ -14,6 +14,11 @@ solversdict: dict[str, Type[core.WordleSolver]] = {
     "statistical": solvers.StatisticalSolver,
 }
 
+prompt = {
+    "play": "P>",
+    "solve": "S>",
+}
+
 
 help_text = """
 This program helps in solving Wordle puzzles.
@@ -59,6 +64,7 @@ class REPLoop:
         if mode not in ("solve", "play"):
             raise ValueError("Invalid mode")
         self.mode = mode
+        self.prompt = prompt[mode]
         if difficulty not in ("easy", "hard"):
             raise ValueError("Invalid difficulty")
         self.difficulty = difficulty
@@ -240,6 +246,7 @@ words. Game reset."
                 self.msg = "Already in solve mode"
                 return
             self.mode = "solve"
+            self.prompt = prompt["solve"]
             self.new()
             self.msg = "Switched to solve mode and game reset"
             return
@@ -249,13 +256,14 @@ words. Game reset."
                 self.msg = "Already in play mode"
                 return
             self.mode = "play"
+            self.prompt = prompt["play"]
             self.new()
             self.msg = "Switched to play mode and game reset"
             return
 
         if cmd == "difficulty":
             if len(self.tokens) < 2:
-                self.msg = "Missing difficulty"
+                self.msg = f"Difficulty: {self.difficulty}"
                 return
             difficulty = self.tokens[1]
             if difficulty not in ("easy", "hard"):
@@ -274,7 +282,7 @@ words. Game reset."
 
     def read(self):
         try:
-            line = input("> ").strip()
+            line = input(f"{self.prompt} ").strip()
         except EOFError:
             print()
             line = "quit"

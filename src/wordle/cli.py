@@ -10,7 +10,7 @@ def parse():
         "-m",
         "--mode",
         choices=["play", "solve"],
-        default="play",
+        default="solve",
         help="Solve or Play, [default: %(default)s]",
     )
     parser.add_argument(
