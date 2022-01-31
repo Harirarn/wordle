@@ -1,4 +1,4 @@
-from wordle import wordle_prob
+from wordle.cli import main
 
 if __name__ == "__main__":
-    wordle_prob.main()
+    main()
