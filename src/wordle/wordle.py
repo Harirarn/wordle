@@ -85,3 +85,21 @@ class WordleList(list):
         self.words: tuple[Wordle, ...] = ziplist[0]
         self.weights: tuple[int, ...] = ziplist[1]
         super().__init__(list_)
+
+
+class HardModeFilter:
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.letters: set[str] = set()
+
+    def add_clue(self, clue: Clue):
+        for i, letter in enumerate(clue.word):
+            if clue[i] > 0:
+                self.letters.add(letter)
+
+    def test(self, word: str | Wordle) -> set[str]:
+        if not isinstance(word, Wordle):
+            word = Wordle(word)
+        return self.letters.difference(set(word))
