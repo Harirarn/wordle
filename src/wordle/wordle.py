@@ -8,12 +8,14 @@ class Wordle(str):
     def __new__(cls, word: str) -> Wordle:
         if isinstance(word, Wordle):
             return word
+        if not word.isalpha():
+            raise ValueError("word must be alphabetic")
         return super().__new__(cls, word.lower())
 
 
 class Clue(list):
-    def __init__(self, word: Wordle, signal: list[int] = None):
-        self.word = word
+    def __init__(self, word: Wordle | str, signal: list[int] = None):
+        self.word = Wordle(word)
         if signal is None:
             signal = [0] * len(word)
         else:
@@ -61,13 +63,18 @@ class WeightedWordle(NamedTuple):
 
 
 class WordleList(list):
-    def __init__(self, wordlelist: list[tuple[str, int] | str]):
+    def __init__(self, wordlelist: list[tuple[str, int]] | list[str]):
         if isinstance(wordlelist[0], str):
-            list_ = [WeightedWordle(Wordle(word), 1) for word in wordlelist]
+            list_ = [
+                WeightedWordle(Wordle(word), 1) for word in wordlelist  # type: ignore
+            ]
         else:
-            list_ = [WeightedWordle(Wordle(word[0]), word[1]) for word in wordlelist]
+            list_ = [
+                WeightedWordle(Wordle(word[0]), word[1])  # type: ignore
+                for word in wordlelist
+            ]
         list_.sort(reverse=True)
         ziplist = tuple(zip(*list_))
-        self.words: tuple[Wordle] = ziplist[0]
-        self.weights: tuple[int] = ziplist[1]
+        self.words: tuple[Wordle, ...] = ziplist[0]
+        self.weights: tuple[int, ...] = ziplist[1]
         super().__init__(list_)

@@ -15,5 +15,5 @@ def test_custom():
 
 def test_file():
     wl = load(length=None, filename="tests/ef3000.txt")
-    assert len(wl) == 3000
+    assert len(wl) == 2994
     assert all([word.weight == 1 for word in wl])
