@@ -32,7 +32,14 @@ class Clue(list):
         return cls(guess, compare(guess, key))
 
 
-def compare(guess: str, key: str) -> list[int]:
+def compare(guess: str | Wordle, key: str | Wordle) -> list[int]:
+    if not isinstance(guess, Wordle):
+        guess = Wordle(guess)
+    if not isinstance(key, Wordle):
+        key = Wordle(key)
+    if len(guess) != len(key):
+        raise ValueError("Length mismatch")
+
     n = len(guess)
     signal = [0] * n
 
