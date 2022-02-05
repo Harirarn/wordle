@@ -157,8 +157,9 @@ words. Game reset."
                 return
             if self.mode == "solve":
                 guess = self.tokens[1]
+                signal = list("".join(self.tokens[2:]))
                 try:
-                    signal = [{"0": 0, "1": 1, "2": 2}[s] for s in self.tokens[2:]]
+                    signal = [{"0": 0, "1": 1, "2": 2}[s] for s in signal]
                 except (ValueError, KeyError):
                     self.msg = "Invalid signal"
                     return
