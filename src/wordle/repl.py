@@ -77,17 +77,17 @@ class REPLoop:
         if autorun:
             self.run()
 
-    def load_wordlist(self):
+    def load_wordlist(self) -> None:
         self.wordlist = loaders.load_wordlelist(self.length, self.wordfile)
         self.solve_session = self.solver(self.wordlist)
         self.play_session = core.PlaySession(self.wordlist, mode=self.difficulty)
 
-    def new(self):
+    def new(self) -> None:
         if self.mode == "play":
             self.play_session.new()
         self.solve_session.reset()
 
-    def eval(self):
+    def eval(self) -> None:
         if len(self.tokens) == 0:
             self.msg = None
             return
@@ -157,16 +157,18 @@ words. Game reset."
                 return
             if self.mode == "solve":
                 guess = self.tokens[1]
-                signal = list("".join(self.tokens[2:]))
                 try:
-                    signal = [{"0": 0, "1": 1, "2": 2}[s] for s in signal]
+                    insignal = [
+                        {"0": 0, "1": 1, "2": 2}[s]
+                        for s in list("".join(self.tokens[2:]))
+                    ]
                 except (ValueError, KeyError):
                     self.msg = "Invalid signal"
                     return
-                if len(signal) != len(guess):
+                if len(insignal) != len(guess):
                     self.msg = "Signal has wrong length"
                     return
-                self.solve_session.add_clue(core.Clue(guess, signal))
+                self.solve_session.add_clue(core.Clue(guess, insignal))
                 self.msg = None
                 return
 
@@ -238,7 +240,11 @@ words. Game reset."
             if len(guess) != self.length:
                 self.msg = f"Word must be the same length as the game {self.length}"
                 return
-            score = self.solve_session.score(guess)
+            try:
+                score = self.solve_session.score(core.Wordle(guess))  # type: ignore
+            except AttributeError:
+                self.msg = "Current solver doesn't support score."
+                return
             self.msg = f"{guess}: {score}"
             return
 
@@ -266,13 +272,17 @@ words. Game reset."
             if len(self.tokens) < 2:
                 self.msg = f"Difficulty: {self.difficulty}"
                 return
-            difficulty = self.tokens[1]
-            if difficulty not in ("easy", "hard"):
+            difficulty_parsedict: dict[str, Literal["easy", "hard"]] = {
+                "easy": "easy",
+                "hard": "hard",
+            }
+            try:
+                self.difficulty = difficulty_parsedict[self.tokens[1]]
+            except KeyError:
                 self.msg = "Difficulty must be easy or hard"
                 return
-            self.difficulty = difficulty
             if self.mode == "play":
-                self.play_session.difficulty = difficulty
+                self.play_session.mode = self.difficulty
             self.msg = f"Difficulty set to {self.difficulty}."
             return
 
@@ -281,7 +291,7 @@ words. Game reset."
             return
         self.msg = f"Unknown command {cmd}"
 
-    def read(self):
+    def read(self) -> None:
         try:
             line = input(f"{self.prompt} ").strip()
         except EOFError:
@@ -289,13 +299,13 @@ words. Game reset."
             line = "quit"
         self.tokens = line.split(" ")
 
-    def print(self):
+    def print(self) -> None:
         if self.msg is None:
             return
         print(self.msg)
         self.msg = None
 
-    def run(self):
+    def run(self) -> None:
         self.quit = False
         try:
             while not self.quit:

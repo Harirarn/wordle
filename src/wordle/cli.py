@@ -1,10 +1,10 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 from wordle import repl
 
 
-def parse():
+def parse() -> Namespace:
     parser = ArgumentParser(description="Wordle")
     parser.add_argument(
         "-m",
@@ -50,7 +50,7 @@ def parse():
     return args
 
 
-def main():
+def main() -> None:
     args = parse()
     repl.REPLoop(
         mode=args.mode,

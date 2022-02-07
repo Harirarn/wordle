@@ -13,10 +13,10 @@ class WordleSolver(Protocol):
     def __init__(self, masterlist: WordleList):
         ...
 
-    def reset(self):
+    def reset(self) -> None:
         ...
 
-    def add_clue(self, clue: Clue):
+    def add_clue(self, clue: Clue) -> None:
         ...
 
     def best(self, n: int) -> list[tuple[Wordle, float]]:
@@ -45,7 +45,7 @@ class PlaySession:
         self.mode = mode
         self.new(ans)
 
-    def new(self, ans: Wordle | str | None = None):
+    def new(self, ans: Wordle | str | None = None) -> None:
         if ans is not None:
             if ans not in self.masterlist.words:
                 raise ValueError("Invalid answer")

@@ -18,7 +18,9 @@ WORDLISTS = {
 }
 
 
-def load_wordlelist(length: int | None = 5, filename: str = None) -> WordleList:
+def load_wordlelist(
+    length: int | None = 5, filename: str | Path | None = None
+) -> WordleList:
     if length == 5 and filename is None:
         wordlist = load_resource("official")
     elif filename is None:

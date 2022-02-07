@@ -5,3 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 minversion = "6.2.5"
 testpaths = ["tests"]
+
+[tool.mypy]
+files = ["src/wordle", "tests"]
+warn_unused_ignores = true
+show_error_codes = true
+ignore_missing_imports = true

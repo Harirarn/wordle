@@ -8,10 +8,10 @@ class PruningWordleList:
         self.masterlist = masterlist
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.wordlelist = [word for word in self.masterlist if word.weight > 0]
 
-    def add_clue(self, clue: Clue):
+    def add_clue(self, clue: Clue) -> None:
         word = clue.word
         if word not in self.masterlist.words:
             raise ValueError("Clue not in wordlist")

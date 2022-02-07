@@ -88,13 +88,13 @@ class WordleList(list):
 
 
 class HardModeFilter:
-    def __init__(self):
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.letters: set[str] = set()
 
-    def add_clue(self, clue: Clue):
+    def add_clue(self, clue: Clue) -> None:
         for i, letter in enumerate(clue.word):
             if clue[i] > 0:
                 self.letters.add(letter)

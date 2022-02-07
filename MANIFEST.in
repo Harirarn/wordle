@@ -1,1 +1,2 @@
 graft src/wordle/resources
+global-include py.typed
