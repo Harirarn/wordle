@@ -56,7 +56,7 @@ def calc_average_score(
     return sum(scores) / len(scores)
 
 
-if __name__ == "__main__" or True:
+if __name__ == "__main__":
     from argparse import ArgumentParser, Namespace
 
     def parse() -> Namespace:
