@@ -1,4 +1,5 @@
 import pytest
+
 import wordle.wordle as wordle
 
 

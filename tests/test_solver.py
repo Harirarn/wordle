@@ -1,6 +1,7 @@
 from typing import Type
 
 import pytest
+
 from wordle import core, loaders, solvers
 
 

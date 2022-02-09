@@ -1,4 +1,5 @@
 import pytest
+
 from wordle import loaders
 from wordle.core import HardModeInvalid, PlaySession
 from wordle.wordle import Clue, Wordle
