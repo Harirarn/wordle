@@ -1,3 +1,4 @@
+import math
 from typing import Type
 
 from wordle import core
@@ -85,8 +86,28 @@ class BlackSS(StatisticalSolver):
         return s
 
 
+class EntropySolver(StatisticalSolver):
+    def score(self, word: Wordle) -> float:
+        if not isinstance(word, Wordle):
+            word = Wordle(word)
+        boxes: dict[tuple[int, ...], int] = {}
+        for key in self.wordlelist:
+            if key.weight == 0:
+                continue
+            signal = tuple(compare(word, key.word))
+            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
+        s = 0.0
+        numwords = len(self.wordlelist)
+        for signal, n in boxes.items():
+            if n == 0:
+                continue
+            s += n / numwords * math.log(n, 2)
+        return s
+
+
 solversdict: dict[str, Type[core.WordleSolver]] = {
     "default": StatisticalSolver,
     "statistical": StatisticalSolver,
     "black": BlackSS,
+    "entropy": EntropySolver,
 }
