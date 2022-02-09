@@ -26,11 +26,11 @@ OUTPUTS: dict[ShapeTheme, dict[ColorMode, tuple[str, str, str]]] = {
     "queerdle": {
         "dark": ("🎱", "🍌", "🐍"),
         "light": ("🥥", "🍌", "🐍"),
-        "darkcb": ("🎱", "💧", "🍊"),
-        "lightcb": ("🥥", "💧", "🍊"),
+        "darkcb": ("🎱", "💦", "🍊"),
+        "lightcb": ("🥥", "💦", "🍊"),
     },
 }
-# 💚🖤💛🟢⚫🟡🤍⚪🥥🍌🐍
+# 💚🖤💛🟢⚫🟡🤍⚪🥥🍌🐍🎱💧💦🍊
 
 
 def heartify(
