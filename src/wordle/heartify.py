@@ -1,7 +1,7 @@
 from typing import Literal, TypeAlias
 
 ColorMode: TypeAlias = Literal["dark", "light", "darkcb", "lightcb"]
-ShapeTheme: TypeAlias = Literal["square", "heart", "circle", "queerdle"]
+ShapeTheme: TypeAlias = Literal["square", "heart", "circle", "queerdle", "flower"]
 
 INPUTS: dict[str, Literal[1, 2, 3]] = {"⬛": 3, "⬜": 3, "🟨": 1, "🟦": 1, "🟩": 2, "🟧": 2}
 OUTPUTS: dict[ShapeTheme, dict[ColorMode, tuple[str, str, str]]] = {
@@ -26,8 +26,14 @@ OUTPUTS: dict[ShapeTheme, dict[ColorMode, tuple[str, str, str]]] = {
     "queerdle": {
         "dark": ("🎱", "🍌", "🐍"),
         "light": ("🥥", "🍌", "🐍"),
-        "darkcb": ("🎱", "💦", "🍑"),
-        "lightcb": ("🥥", "💦", "🍑"),
+        "darkcb": ("🎱", "🍑", "💦"),
+        "lightcb": ("🥥", "🍑", "💦"),
+    },
+    "flower": {
+        "dark": ("💮", "🌸", "🏵️"),
+        "light": ("🌼", "🌻", "🌹"),
+        "darkcb": ("🥀", "🌷", "💐"),
+        "lightcb": ("🌼", "💠", "🌺"),
     },
 }
 # 💚🖤💛🟢⚫🟡🤍⚪🥥🍌🐍🎱💧💦🍑

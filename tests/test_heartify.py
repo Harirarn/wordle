@@ -26,4 +26,4 @@ from wordle.heartify import heartify
     ],
 )
 def test_heartify(text, theme, mode, black, yellow, green, expected):
-    assert heartify(text, theme, mode) == expected
+    assert heartify(text, theme, mode, black, yellow, green) == expected
