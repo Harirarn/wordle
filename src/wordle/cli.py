@@ -44,7 +44,8 @@ def parse() -> Namespace:
         choices=repl.solversdict.keys(),
         default="default",
         metavar="NAME",
-        help="Algorithm to use for solving.",
+        help="Algorithm to use for solving. Available: "
+        f"{', '.join(repl.solversdict.keys())}",
     )
     args = parser.parse_args()
     return args

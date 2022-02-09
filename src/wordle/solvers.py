@@ -69,7 +69,24 @@ class StatisticalSolver(PruningWordleList):
         return self.besth(1)[0][0]
 
 
+class BlackSS(StatisticalSolver):
+    def score(self, word: Wordle) -> float:
+        if not isinstance(word, Wordle):
+            word = Wordle(word)
+        boxes: dict[tuple[int, ...], int] = {}
+        for key in self.wordlelist:
+            if key.weight == 0:
+                continue
+            signal = tuple(compare(word, key.word))
+            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
+        s = 0.0
+        for signal, n in boxes.items():
+            s += n * n / (signal.count(0) + 1)
+        return s
+
+
 solversdict: dict[str, Type[core.WordleSolver]] = {
     "default": StatisticalSolver,
     "statistical": StatisticalSolver,
+    "black": BlackSS,
 }
