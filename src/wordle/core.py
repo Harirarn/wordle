@@ -3,10 +3,7 @@ from __future__ import annotations
 import random
 from typing import Literal, Protocol
 
-from wordle import solvers
 from wordle.wordle import Clue, HardModeFilter, Wordle, WordleList
-
-DEFAULT_SOLVER = solvers.StatisticalSolver
 
 
 class WordleSolver(Protocol):

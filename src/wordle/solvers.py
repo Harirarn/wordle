@@ -1,3 +1,6 @@
+from typing import Type
+
+from wordle import core
 from wordle.wordle import Clue, WeightedWordle, Wordle, WordleList, compare
 
 
@@ -64,3 +67,9 @@ class StatisticalSolver(PruningWordleList):
 
     def guess(self) -> Wordle:
         return self.besth(1)[0][0]
+
+
+solversdict: dict[str, Type[core.WordleSolver]] = {
+    "default": StatisticalSolver,
+    "statistical": StatisticalSolver,
+}

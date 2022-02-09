@@ -2,17 +2,14 @@ from __future__ import absolute_import
 
 import random
 from pathlib import Path
-from typing import Literal, Type
+from typing import Literal
 
-from wordle import core, loaders, solvers
+from wordle import core, loaders
+from wordle.solvers import solversdict
 from wordle.wordle import compare
 
 signal_emoji = "⬛🟨🟩"
 DEFAULT_LIST_SIZE = 20
-solversdict: dict[str, Type[core.WordleSolver]] = {
-    "default": core.DEFAULT_SOLVER,
-    "statistical": solvers.StatisticalSolver,
-}
 
 prompt = {
     "play": "P>",
