@@ -1,4 +1,4 @@
-from typing import Literal, TypeAlias
+from typing import Final, Literal, TypeAlias
 
 ColorMode: TypeAlias = Literal["dark", "light", "darkcb", "lightcb"]
 ShapeTheme: TypeAlias = Literal["square", "heart", "circle", "queerdle", "flower"]
@@ -38,11 +38,14 @@ OUTPUTS: dict[ShapeTheme, dict[ColorMode, tuple[str, str, str]]] = {
 }
 # 💚🖤💛🟢⚫🟡🤍⚪🥥🍌🐍🎱💧💦🍑
 
+DEFAULT_THEME: Final = "heart"
+DEFAULT_MODE: Final = "dark"
+
 
 def heartify(
     text: str,
-    theme: ShapeTheme = "heart",
-    mode: ColorMode = "dark",
+    theme: ShapeTheme = DEFAULT_THEME,
+    mode: ColorMode = DEFAULT_MODE,
     black: str = None,
     yellow: str = None,
     green: str = None,
@@ -59,13 +62,49 @@ def heartify(
     return "".join(OUT.get(i, False) or i for i in collect)  # type: ignore
 
 
-# print(
-#     heartify(
-#         """
-# Wordle 235 2/6
+if __name__ == "__main__":
+    from argparse import ArgumentParser
 
-# 🟩⬛⬛🟨⬛
-# 🟩🟩🟩🟩🟩
-# """
-#     )
-# )
+    def main() -> None:
+        parser = ArgumentParser(
+            description="Changes the theme of wordle shares."
+            "Paste the share into the clipboard and run the script."
+        )
+        parser.add_argument(
+            "-t",
+            "--theme",
+            choices=OUTPUTS.keys(),
+            default=DEFAULT_THEME,
+            help=" Theme to use. Default:  %(default)s",
+        )
+        parser.add_argument(
+            "-m",
+            "--mode",
+            choices=OUTPUTS[DEFAULT_THEME].keys(),
+            default=DEFAULT_MODE,
+            help=" Dark / Light + ? Colour-blind. Default:  %(default)s",
+        )
+        parser.add_argument("-b", "--black", type=str, default=None)
+        parser.add_argument("-y", "--yellow", type=str, default=None)
+        parser.add_argument("-g", "--green", type=str, default=None)
+        args = parser.parse_args()
+
+        try:
+            from tkinter import Tk
+        except ImportError:
+            import sys
+
+            text = sys.stdin.read()
+            istk = False
+        else:
+            text = Tk().clipboard_get()
+            istk = True
+
+        out = heartify(text, args.theme, args.mode, args.black, args.yellow, args.green)
+
+        print(out)
+        if istk:
+            Tk().clipboard_clear()
+            Tk().clipboard_append(out)
+
+    main()
