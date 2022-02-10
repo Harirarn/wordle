@@ -12,10 +12,11 @@ history_depth = 2
 def calc_average_score(
     wordlist: WordleList,
     solvertype: Type[WordleSolver],
+    hardmode: bool = False,
     firstguess: str = None,
     logfile: str | Path | None = None,
 ) -> float:
-    player = PlaySession(wordlist)
+    player = PlaySession(wordlist, "hard" if hardmode else "easy")
     solver = solvertype(wordlist)
     solver.reset()
     scores: list[int] = []
@@ -39,7 +40,10 @@ def calc_average_score(
             if tuple(curhist) in history:
                 guess, points = history[tuple(curhist)]
             else:
-                guess, points = solver.besth(1)[0]
+                if hardmode:
+                    guess, points = solver.besth(1)[0]
+                else:
+                    guess, points = solver.best(1)[0]
                 if len(curhist) < history_depth:
                     history[tuple(curhist)] = guess, points
             clue = player.guess(guess)
@@ -75,6 +79,9 @@ if __name__ == "__main__":
         )
         parser.add_argument("-l", "--logfile", type=Path, default=None)
         parser.add_argument("-g", "--firstguess", type=str, default=None)
+        parser.add_argument(
+            "-H", "--hard", action="store_true", help="Solve in hardmode."
+        )
         return parser.parse_args()
 
     def main() -> None:
@@ -94,7 +101,11 @@ if __name__ == "__main__":
             else:
                 logfile = Path(f"benchmark_{args.solver}.json")
         score = calc_average_score(
-            wordlist, solver, firstguess=args.firstguess, logfile=logfile
+            wordlist,
+            solver,
+            hardmode=args.hard,
+            firstguess=args.firstguess,
+            logfile=logfile,
         )
         print(f"For solver: {args.solver} average score: {score:.2f}")
 
