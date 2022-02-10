@@ -40,9 +40,16 @@ class StatisticalSolver(PruningWordleList):
             signal = tuple(compare(word, key.word))
             boxes[signal] = boxes.setdefault(signal, 0) + key.weight
         s = 0.0
-        for n in boxes.values():
-            s += n * n
+        numwords = len(self.wordlelist)
+        for signal, n in boxes.items():
+            if n == 0:
+                continue
+            s += self.score_formula(n, numwords, signal.count(0))
         return s
+
+    @staticmethod
+    def score_formula(n, numwords, blacks):
+        return n * n
 
     def compute(self, wordles: list[Wordle]) -> list[tuple[float, Wordle]]:
         scores = {word: self.score(word) for word in wordles}
@@ -70,44 +77,28 @@ class StatisticalSolver(PruningWordleList):
         return self.besth(1)[0][0]
 
 
-class BlackSS(StatisticalSolver):
-    def score(self, word: Wordle) -> float:
-        if not isinstance(word, Wordle):
-            word = Wordle(word)
-        boxes: dict[tuple[int, ...], int] = {}
-        for key in self.wordlelist:
-            if key.weight == 0:
-                continue
-            signal = tuple(compare(word, key.word))
-            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
-        s = 0.0
-        for signal, n in boxes.items():
-            s += n * n / (signal.count(0) + 1)
-        return s
+class BlackSolver(StatisticalSolver):
+    @staticmethod
+    def score_formula(n, numwords, blacks):
+        return n * n / (blacks + 1)
 
 
 class EntropySolver(StatisticalSolver):
-    def score(self, word: Wordle) -> float:
-        if not isinstance(word, Wordle):
-            word = Wordle(word)
-        boxes: dict[tuple[int, ...], int] = {}
-        for key in self.wordlelist:
-            if key.weight == 0:
-                continue
-            signal = tuple(compare(word, key.word))
-            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
-        s = 0.0
-        numwords = len(self.wordlelist)
-        for signal, n in boxes.items():
-            if n == 0:
-                continue
-            s += n / numwords * math.log(n, 2)
-        return s
+    @staticmethod
+    def score_formula(n, numwords, blacks):
+        return n / numwords * math.log(n, 2)
+
+
+class BlackEntropySolver(EntropySolver):
+    @staticmethod
+    def score_formula(n, numwords, blacks):
+        return n / numwords * math.log(n, 2) / (blacks + 1)
 
 
 solversdict: dict[str, Type[core.WordleSolver]] = {
     "default": StatisticalSolver,
     "statistical": StatisticalSolver,
-    "black": BlackSS,
+    "black": BlackSolver,
     "entropy": EntropySolver,
+    "blackentropy": BlackEntropySolver,
 }
