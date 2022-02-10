@@ -11,3 +11,6 @@ files = ["src/wordle", "tests"]
 warn_unused_ignores = true
 show_error_codes = true
 ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"

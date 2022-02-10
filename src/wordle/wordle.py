@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import string
-from typing import NamedTuple
+from typing import Iterable, NamedTuple
 
 
 class Wordle(str):
@@ -99,7 +99,8 @@ class HardModeFilter:
             if clue[i] > 0:
                 self.letters.add(letter)
 
-    def test(self, word: str | Wordle) -> set[str]:
-        if not isinstance(word, Wordle):
-            word = Wordle(word)
+    def test(self, word: Wordle) -> set[str]:
         return self.letters.difference(set(word))
+
+    def filter(self, list_: Iterable[Wordle]) -> Iterable[Wordle]:
+        return filter(lambda word: not self.test(word), list_)
