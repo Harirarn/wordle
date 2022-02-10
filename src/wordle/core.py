@@ -55,6 +55,7 @@ class PlaySession:
         self.hard_filter.reset()
 
     def guess(self, guess: str | Wordle) -> Clue:
+        guess = Wordle(guess)
         if guess not in self.masterlist.words:
             raise ValueError("Invalid guess")
         if self.mode == "hard" and (missing := self.hard_filter.test(guess)):

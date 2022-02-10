@@ -2,7 +2,14 @@ import math
 from typing import Type
 
 from wordle import core
-from wordle.wordle import Clue, WeightedWordle, Wordle, WordleList, compare
+from wordle.wordle import (
+    Clue,
+    HardModeFilter,
+    WeightedWordle,
+    Wordle,
+    WordleList,
+    compare,
+)
 
 
 class PruningWordleList:
@@ -10,10 +17,12 @@ class PruningWordleList:
         if not isinstance(masterlist, WordleList):
             masterlist = WordleList(masterlist)
         self.masterlist = masterlist
+        self.hmf = HardModeFilter()
         self.reset()
 
     def reset(self) -> None:
         self.wordlelist = [word for word in self.masterlist if word.weight > 0]
+        self.hmf.reset()
 
     def add_clue(self, clue: Clue) -> None:
         word = clue.word
@@ -24,6 +33,7 @@ class PruningWordleList:
         self.wordlelist = [
             key for key in self.wordlelist if compare(word, key.word) == clue
         ]
+        self.hmf.add_clue(clue)
 
     def list(self) -> list[Wordle]:
         return [word.word for word in self.wordlelist]
@@ -58,20 +68,23 @@ class StatisticalSolver(PruningWordleList):
         return ss
 
     def _best(
-        self, n: int, wordles: list[WeightedWordle]
+        self, n: int, wordles: list[WeightedWordle], hardmode: bool = False
     ) -> list[tuple[Wordle, float]]:
-        bestlist = self.compute([word.word for word in wordles])
+        testwords = [word.word for word in wordles]
+        if hardmode:
+            testwords = list(self.hmf.filter(testwords))
+        bestlist = self.compute(testwords)
         if n > 0 and n < len(bestlist):
             bestlist = bestlist[:n]
         return [(w, s) for s, w in bestlist]
 
     def besth(self, n: int) -> list[tuple[Wordle, float]]:
-        return self._best(n, self.wordlelist)
+        return self._best(n, self.masterlist, True)
 
-    def best(self, n: int) -> list[tuple[Wordle, float]]:
+    def best(self, n: int, hardmode: bool = False) -> list[tuple[Wordle, float]]:
         if len(self.wordlelist) == 1:
             return [(self.wordlelist[0].word, 1.0)]
-        return self._best(n, self.masterlist)
+        return self._best(n, self.masterlist, False)
 
     def guess(self) -> Wordle:
         return self.besth(1)[0][0]
@@ -111,6 +124,9 @@ class EntropySolver(StatisticalSolver):
     @staticmethod
     def score_formula(n, numwords, blacks):
         return n / numwords * math.log(n, 2)
+
+    def besth(self, n: int) -> list[tuple[Wordle, float]]:
+        return self._best(n, self.masterlist, True)
 
 
 class BlackEntropySolver(EntropySolver):
