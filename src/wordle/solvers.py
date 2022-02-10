@@ -35,7 +35,7 @@ class StatisticalSolver(PruningWordleList):
             word = Wordle(word)
         boxes: dict[tuple[int, ...], int] = {}
         for key in self.wordlelist:
-            if key.weight == 0:
+            if key.weight == 0 or key.word == word:
                 continue
             signal = tuple(compare(word, key.word))
             boxes[signal] = boxes.setdefault(signal, 0) + key.weight
