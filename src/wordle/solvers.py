@@ -81,9 +81,7 @@ class StatisticalSolver(PruningWordleList):
     def besth(self, n: int) -> list[tuple[Wordle, float]]:
         return self._best(n, self.masterlist, True)
 
-    def best(self, n: int, hardmode: bool = False) -> list[tuple[Wordle, float]]:
-        if len(self.wordlelist) == 1:
-            return [(self.wordlelist[0].word, 1.0)]
+    def best(self, n: int) -> list[tuple[Wordle, float]]:
         return self._best(n, self.masterlist, False)
 
     def guess(self) -> Wordle:
@@ -124,9 +122,6 @@ class EntropySolver(StatisticalSolver):
     @staticmethod
     def score_formula(n, numwords, blacks):
         return n / numwords * math.log(n, 2)
-
-    def besth(self, n: int) -> list[tuple[Wordle, float]]:
-        return self._best(n, self.masterlist, True)
 
 
 class BlackEntropySolver(EntropySolver):
