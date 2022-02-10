@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 from typing import Type
 
@@ -89,10 +90,11 @@ if __name__ == "__main__":
         solver = solvers.solversdict[args.solver]
         wordlist = loaders.load_wordlelist()
         if args.firstguess is not None and Wordle(args.firstguess) not in (
-            word.word for word in wordlist if word.weight > 0
+            word.word for word in wordlist
         ):
-            print(f"{args.firstguess} is not in the wordlist.")
-            exit(1)
+            print(
+                f"WARNING: {args.firstguess} is not in the wordlist.", file=sys.stderr
+            )
         if args.logfile is not None:
             logfile = args.logfile
         else:
