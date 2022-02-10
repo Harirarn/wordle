@@ -90,22 +90,11 @@ if __name__ == "__main__":
         parser.add_argument("-g", "--green", type=str, default=None)
         args = parser.parse_args()
 
-        try:
-            from tkinter import Tk
-        except ImportError:
-            import sys
-
-            text = sys.stdin.read()
-            istk = False
-        else:
-            text = Tk().clipboard_get()
-            istk = True
+        text = clipboard.paste()
 
         out = heartify(text, args.theme, args.mode, args.black, args.yellow, args.green)
 
         print(out)
-        if istk:
-            Tk().clipboard_clear()
-            clipboard.copy(out)
+        clipboard.copy(out)
 
     main()
