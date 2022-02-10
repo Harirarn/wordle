@@ -1,4 +1,5 @@
 from typing import Final, Literal, TypeAlias
+import clipboard
 
 ColorMode: TypeAlias = Literal["dark", "light", "darkcb", "lightcb"]
 ShapeTheme: TypeAlias = Literal["square", "heart", "circle", "queerdle", "flower"]
@@ -105,6 +106,6 @@ if __name__ == "__main__":
         print(out)
         if istk:
             Tk().clipboard_clear()
-            Tk().clipboard_append(out)
+            clipboard.copy(out)
 
     main()
