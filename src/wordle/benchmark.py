@@ -96,10 +96,11 @@ if __name__ == "__main__":
         if args.logfile is not None:
             logfile = args.logfile
         else:
+            h = "h" if args.hard else ""
             if args.firstguess is not None:
-                logfile = Path(f"benchmark_{args.solver}_{args.firstguess}.json")
+                logfile = Path(f"benchmark_{args.solver}{h}_{args.firstguess}.json")
             else:
-                logfile = Path(f"benchmark_{args.solver}.json")
+                logfile = Path(f"benchmark_{args.solver}{h}.json")
         score = calc_average_score(
             wordlist,
             solver,

@@ -84,6 +84,30 @@ class BlackSolver(StatisticalSolver):
 
 
 class EntropySolver(StatisticalSolver):
+    def score(self, word: Wordle) -> float:
+        if not isinstance(word, Wordle):
+            word = Wordle(word)
+        boxes: dict[tuple[int, ...], int] = {}
+        for key in self.wordlelist:
+            if key.weight == 0:
+                continue
+            signal = tuple(compare(word, key.word))
+            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
+        s = 0.0
+        numwords = len(self.wordlelist)
+        for signal, n in boxes.items():
+            if n == 0:
+                continue
+            s += self.score_formula(n, numwords, signal.count(0))
+        s = self.turn_per_entropy(s) + 1
+        if word in [w.word for w in self.wordlelist]:
+            s *= (numwords - 1) / numwords
+        return s
+
+    @staticmethod
+    def turn_per_entropy(x: float) -> float:
+        return x * 0.31
+
     @staticmethod
     def score_formula(n, numwords, blacks):
         return n / numwords * math.log(n, 2)
