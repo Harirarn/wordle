@@ -1,5 +1,5 @@
 from typing import Final, Literal, TypeAlias
-import clipboard
+import pyperclip
 
 ColorMode: TypeAlias = Literal["dark", "light", "darkcb", "lightcb"]
 ShapeTheme: TypeAlias = Literal["square", "heart", "circle", "queerdle", "flower"]
@@ -90,11 +90,11 @@ if __name__ == "__main__":
         parser.add_argument("-g", "--green", type=str, default=None)
         args = parser.parse_args()
 
-        text = clipboard.paste()
+        text = pyperclip.paste()
 
         out = heartify(text, args.theme, args.mode, args.black, args.yellow, args.green)
 
         print(out)
-        clipboard.copy(out)
+        pyperclip.copy(out)
 
     main()
