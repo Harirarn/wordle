@@ -6,7 +6,7 @@ from typing import Literal
 
 from wordle import core, loaders
 from wordle.solvers import solversdict
-from wordle.wordle import compare
+from wordle.wordle import compare, Wordle
 
 signal_emoji = "⬛🟨🟩"
 DEFAULT_LIST_SIZE = 20
@@ -155,10 +155,14 @@ words. Game reset."
             if self.mode == "solve":
                 guess = self.tokens[1]
                 try:
-                    insignal = [
-                        {"0": 0, "1": 1, "2": 2}[s]
-                        for s in list("".join(self.tokens[2:]))
-                    ]
+                    try:
+                        key = Wordle(self.tokens[2])
+                        insignal = compare(guess, key)
+                    except ValueError:
+                        insignal = [
+                            {"0": 0, "1": 1, "2": 2}[s]
+                            for s in list("".join(self.tokens[2:]))
+                        ]
                 except (ValueError, KeyError):
                     self.msg = "Invalid signal"
                     return
