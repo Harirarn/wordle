@@ -26,8 +26,6 @@ class PruningWordleList:
 
     def add_clue(self, clue: Clue) -> None:
         word = clue.word
-        if word not in self.masterlist.words:
-            raise ValueError("Clue not in wordlist")
         if len(clue) != len(word):
             raise ValueError("Signal length invalid")
         self.wordlelist = [
