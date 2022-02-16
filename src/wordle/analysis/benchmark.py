@@ -16,7 +16,7 @@ def calc_average_score(
     hardmode: bool = False,
     firstguess: str = None,
     logfile: str | Path | None = None,
-) -> float:
+) -> tuple[float, int]:
     player = PlaySession(wordlist, "hard" if hardmode else "easy")
     solver = solvertype(wordlist)
     solver.reset()
@@ -58,10 +58,11 @@ def calc_average_score(
                 continue
             solver.add_clue(clue)
             curhist.append((guess, tuple(clue)))
+    fails: int = sum(1 for word in data if data[word]["tries"] > 6)  # type: ignore
     if logfile is not None:
         with open(logfile, "w") as f:
             json.dump(data, f)
-    return sum(scores) / len(scores)
+    return sum(scores) / len(scores), fails
 
 
 if __name__ == "__main__":
@@ -103,13 +104,13 @@ if __name__ == "__main__":
                 logfile = Path(f"benchmark_{args.solver}{h}_{args.firstguess}.json")
             else:
                 logfile = Path(f"benchmark_{args.solver}{h}.json")
-        score = calc_average_score(
+        score, fails = calc_average_score(
             wordlist,
             solver,
             hardmode=args.hard,
             firstguess=args.firstguess,
             logfile=logfile,
         )
-        print(f"For solver: {args.solver} average score: {score:.2f}")
+        print(f"For solver: {args.solver} average score: {score:.2f}, fails: {fails}")
 
     main()
