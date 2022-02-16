@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import string
+from functools import cache
 from typing import Iterable, NamedTuple
 
 
@@ -32,6 +33,7 @@ class Clue(list):
         return cls(guess, compare(guess, key))
 
 
+@cache
 def compare(guess: str | Wordle, key: str | Wordle) -> list[int]:
     if not isinstance(guess, Wordle):
         guess = Wordle(guess)
