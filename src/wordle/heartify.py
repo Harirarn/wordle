@@ -1,4 +1,5 @@
 from typing import Final, Literal, TypeAlias
+
 import pyperclip
 
 ColorMode: TypeAlias = Literal["dark", "light", "darkcb", "lightcb"]

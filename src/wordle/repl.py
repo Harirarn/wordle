@@ -6,7 +6,7 @@ from typing import Literal
 
 from wordle import core, loaders
 from wordle.solvers import solversdict
-from wordle.wordle import compare, Wordle
+from wordle.wordle import Wordle, compare
 
 signal_emoji = "⬛🟨🟩"
 DEFAULT_LIST_SIZE = 20
