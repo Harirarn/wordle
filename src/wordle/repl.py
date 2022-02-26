@@ -154,6 +154,9 @@ words. Game reset."
                 return
             if self.mode == "solve":
                 guess = self.tokens[1]
+                if len(self.tokens) < 3:
+                    self.msg = "Missing signal"
+                    return
                 try:
                     try:
                         key = Wordle(self.tokens[2])
