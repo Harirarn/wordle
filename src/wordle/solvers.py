@@ -38,12 +38,12 @@ class PruningWordleList:
 
 
 class StatisticalSolver(PruningWordleList):
-    def score(self, word: Wordle) -> float:
+    def score(self, word: Wordle, hard: bool = False) -> float:
         if not isinstance(word, Wordle):
             word = Wordle(word)
         boxes: dict[tuple[int, ...], int] = {}
         for key in self.wordlelist:
-            if key.weight == 0 or key.word == word:
+            if key.weight == 0:
                 continue
             signal = tuple(compare(word, key.word))
             boxes[signal] = boxes.setdefault(signal, 0) + key.weight
@@ -52,15 +52,26 @@ class StatisticalSolver(PruningWordleList):
         for signal, n in boxes.items():
             if n == 0:
                 continue
-            s += self.score_formula(n, numwords, signal.count(0))
+            s += self.score_formula(n, numwords, signal.count(0), hard=hard)
+        s = self.post_process_score(s)
+        if word in [w.word for w in self.wordlelist]:
+            s *= (numwords - 1) / numwords
         return s
 
-    @staticmethod
-    def score_formula(n, numwords, blacks):
+    @classmethod
+    def post_process_score(cls, s: float) -> float:
+        return s
+
+    @classmethod
+    def score_formula(
+        cls, n: float, numwords: float, blacks: int, hard: bool = False
+    ) -> float:
         return n * n
 
-    def compute(self, wordles: list[Wordle]) -> list[tuple[float, Wordle]]:
-        scores = {word: self.score(word) for word in wordles}
+    def compute(
+        self, wordles: list[Wordle], hard: bool = False
+    ) -> list[tuple[float, Wordle]]:
+        scores = {word: self.score(word, hard=hard) for word in wordles}
         ss = [(s, w) for w, s in scores.items()]
         ss.sort()
         return ss
@@ -71,7 +82,7 @@ class StatisticalSolver(PruningWordleList):
         testwords = [word.word for word in wordles]
         if hardmode:
             testwords = list(self.hmf.filter(testwords))
-        bestlist = self.compute(testwords)
+        bestlist = self.compute(testwords, hard=hardmode)
         if n > 0 and n < len(bestlist):
             bestlist = bestlist[:n]
         return [(w, s) for s, w in bestlist]
@@ -87,44 +98,40 @@ class StatisticalSolver(PruningWordleList):
 
 
 class BlackSolver(StatisticalSolver):
-    @staticmethod
-    def score_formula(n, numwords, blacks):
+    @classmethod
+    def score_formula(
+        cls, n: float, numwords: float, blacks: int, hard: bool = False
+    ) -> float:
         return n * n / (blacks + 1)
 
 
 class EntropySolver(StatisticalSolver):
-    def score(self, word: Wordle) -> float:
-        if not isinstance(word, Wordle):
-            word = Wordle(word)
-        boxes: dict[tuple[int, ...], int] = {}
-        for key in self.wordlelist:
-            if key.weight == 0:
-                continue
-            signal = tuple(compare(word, key.word))
-            boxes[signal] = boxes.setdefault(signal, 0) + key.weight
-        s = 0.0
-        numwords = len(self.wordlelist)
-        for signal, n in boxes.items():
-            if n == 0:
-                continue
-            s += self.score_formula(n, numwords, signal.count(0))
-        s = self.turn_per_entropy(s) + 1
-        if word in [w.word for w in self.wordlelist]:
-            s *= (numwords - 1) / numwords
-        return s
+    tpe = {
+        True: [0.29074625, 0.57828474, 0.40057718, 0.31091934, 0.26057674, 0.2367127],
+        False: [0.27205125, 0.46766151, 0.34938985, 0.29067934, 0.25604451, 0.23561666],
+    }
 
-    @staticmethod
-    def turn_per_entropy(x: float) -> float:
-        return x * 0.31
+    @classmethod
+    def turn_per_entropy(cls, entropy: float, blacks: int, hard: bool = False) -> float:
+        return entropy * cls.tpe[hard][blacks]
 
-    @staticmethod
-    def score_formula(n, numwords, blacks):
-        return n / numwords * math.log(n, 2)
+    @classmethod
+    def score_formula(
+        cls, n: float, numwords: float, blacks: int, hard: bool = False
+    ) -> float:
+        entropy = n / numwords * math.log(n, 2)
+        return cls.turn_per_entropy(entropy, blacks, hard=hard)
+
+    @classmethod
+    def post_process_score(cls, s: float) -> float:
+        return s + 1
 
 
 class BlackEntropySolver(EntropySolver):
-    @staticmethod
-    def score_formula(n, numwords, blacks):
+    @classmethod
+    def score_formula(
+        cls, n: float, numwords: float, blacks: int, hard: bool = False
+    ) -> float:
         return n / numwords * math.log(n, 2) / (blacks + 1)
 
 
